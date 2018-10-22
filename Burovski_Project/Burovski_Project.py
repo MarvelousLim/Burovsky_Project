@@ -7,7 +7,7 @@ g = 9.8 #m/s^2
 L = 1.0 #m
 m = 1.0 #kg
 omega_0 = np.sqrt(g / L)
-y_0 = [np.pi / 3, 0] #y = [alpha, omega]
+y_0 = [np.pi / 2, 0] #y = [alpha, omega]
 t = np.linspace(0.0, 10.0, 1000)
 
 def energy_calc(y):
