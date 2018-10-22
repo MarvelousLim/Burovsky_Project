@@ -7,7 +7,7 @@ g = 9.8 #m/s^2
 L = 1.0 #m
 m = 1.0 #kg
 omega_0 = np.sqrt(g / L)
-y_0 = [np.pi / 2, 0] #y = [alpha, omega]
+y_0 = [np.pi - 0.1, 0] #y = [alpha, omega]
 t = np.linspace(0.0, 10.0, 1000)
 
 def energy_calc(y):
@@ -55,6 +55,16 @@ ax3.set_ylim(0, energy_calc(y_0) + 0.5)
 ax3.set_title('energy-t coordinates')
 ax3.grid()
 
+#forth: phase diagramm
+ax4 = fig.add_subplot(2, 2, 4)
+ax4.set_xlim(-np.pi, np.pi)
+ax4.set_ylim(-np.sqrt(2 * energy[0] / (m * L ** 2)), np.sqrt(2 * energy[0] / (m * L ** 2)))
+ax4.set_xlabel('alpha')
+ax4.set_ylabel('omega')
+ax4.set_title('phase diagramm')
+ax4.grid()
+
+
 def init(): # Initialize with a blank plot
     line1, = ax1.plot([], []) # an empty lines, global variables
     line1a, = ax1.plot([], [])
@@ -62,7 +72,10 @@ def init(): # Initialize with a blank plot
     line2a, = ax2.plot([], [])
     line3, = ax3.plot([], [])
     line3a, = ax3.plot([], [])
-    return line1, line1a, line2, line2a, line3, line3a
+    line4, = ax4.plot([], [])
+    line4a, = ax4.plot([], [])
+
+    return line1, line1a, line2, line2a, line3, line3a, line4, line4a
 
 def animate(i):
     #first
@@ -74,15 +87,19 @@ def animate(i):
     #second
     psi_arr = ode_sol[:i, 0]
     t_arr = t[:i]
-    line2, = ax2.plot(psi_arr[:-head], t_arr[:-head], color = 'black')
+    line2, = ax2.plot(psi_arr[:1 - head], t_arr[:1 - head], color = 'black')
     line2a, = ax2.plot(psi_arr[-head:], t_arr[-head:], color = 'red')
     #third
     energy_arr = energy[:i]
-    line3, = ax3.plot(t_arr[:-head], energy_arr[:-head], color = 'black')
+    line3, = ax3.plot(t_arr[:1 - head], energy_arr[:1 - head], color = 'black')
     line3a, = ax3.plot(t_arr[-head:], energy_arr[-head:], color = 'red')
-    return line1, line1a, line2, line2a, line3, line3a
+    #forth
+    omega_arr = ode_sol[:i, 1]
+    line4, = ax4.plot(psi_arr[:1 - head], omega_arr[:1 - head], color = 'black')
+    line4a, = ax4.plot(psi_arr[-head:], omega_arr[-head:], color = 'red')
+    return line1, line1a, line2, line2a, line3, line3a, line4, line4a
 
-anim = animation.FuncAnimation(fig, animate, init_func = init, frames = len(t), interval = 20, blit = True)
+anim = animation.FuncAnimation(fig, animate, init_func = init, frames = len(t), interval = 10, blit = True)
 plt.legend()
 plt.tight_layout()  
 plt.show()
