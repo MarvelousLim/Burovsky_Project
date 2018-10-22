@@ -6,7 +6,10 @@ from scipy import integrate
 g = 9.8 #m/s^2
 L = 1.0 #m
 m = 1.0 #kg
+b = 0.01 # friction coeff in SI smth
+
 omega_0 = np.sqrt(g / L)
+delta = 0.5 * b / m
 y_0 = [np.pi - 0.1, 0] #y = [alpha, omega]
 t = np.linspace(0.0, 10.0, 1000)
 
@@ -17,13 +20,13 @@ def energy_calc(y):
     P = m * g * L * (1 - np.cos(alpha)) 
     return K + P
 
-def pend_deriv(y, t, omega_0):
+def pend_deriv(y, t, omega_0, delta):
     """returns dy/dt for odeint"""
     alpha, omega = y
-    dydt = [omega, - omega_0 ** 2 * np.sin(alpha)]
+    dydt = [omega, - 2 * delta * omega - omega_0 ** 2 * np.sin(alpha)]
     return dydt
 
-ode_sol = integrate.odeint(pend_deriv, y_0, t, args = (omega_0, )) #global variable
+ode_sol = integrate.odeint(pend_deriv, y_0, t, args = (omega_0, delta)) #global variable
 energy = [energy_calc(y) for y in ode_sol]
 
 # Here we done with calculations, so we do nice (or not) pic ####################################
