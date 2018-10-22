@@ -22,7 +22,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Burovski_Project.py" />
-    <Compile Include="odesol.py">
+    <Compile Include="test.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="test2.py">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
