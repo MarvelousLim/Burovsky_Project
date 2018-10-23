@@ -6,17 +6,21 @@ from scipy import integrate
 g = 9.8 #m/s^2
 L = 1.0 #m
 m = 1.0 #kg
-b = 0.1 # friction coeff in SI smth
+b = 0.1 #friction coeff in SI-smth
 
 omega_0 = np.sqrt(g / L)
 delta = 0.5 * b / m
 y_0 = [np.pi - 0.2, 0] #y = [alpha, omega]
 t = (0.0, 100.0)
-dt = 0.1
+dt = 0.1 #crutch for solve_ivp, or therell be not enought points on graphs
 
-#useless function below
+#useless function
 def periodic_cond(psi):
     return (psi + np.pi) % (2 * np.pi) - np.pi
+
+#event function
+def marvelous_strike(t, y):
+    return 0.5 * energy_calc(y_0) - energy_calc(y)
 
 def energy_calc(y):
     """returns energy of the state"""
@@ -31,7 +35,8 @@ def pend_deriv(t, y):
     dydt = [omega, - 2 * delta * omega - omega_0 ** 2 * np.sin(alpha)]
     return dydt
 
-ode_sol = integrate.solve_ivp(pend_deriv, t, y_0, max_step = dt) #global variable
+ode_sol = integrate.solve_ivp(pend_deriv, t, y_0, max_step = dt, events = marvelous_strike) #global variable
+print(ode_sol.t_events, ode_sol.message)
 t = ode_sol.t
 ode_sol = ode_sol.y.transpose()
 energy = [energy_calc(y) for y in ode_sol]
@@ -86,7 +91,6 @@ def init(): # Initialize with a blank plot
     line3a, = ax3.plot([], [])
     line4, = ax4.plot([], [])
     line4a, = ax4.plot([], [])
-
     return line1, line1a, line2, line2a, line3, line3a, line4, line4a
 
 def animate(i):
