@@ -6,12 +6,17 @@ from scipy import integrate
 g = 9.8 #m/s^2
 L = 1.0 #m
 m = 1.0 #kg
-b = 0.01 # friction coeff in SI smth
+b = 0.1 # friction coeff in SI smth
 
 omega_0 = np.sqrt(g / L)
 delta = 0.5 * b / m
-y_0 = [np.pi - 0.1, 0] #y = [alpha, omega]
-t = np.linspace(0.0, 10.0, 1000)
+y_0 = [np.pi - 0.2, 0] #y = [alpha, omega]
+t = (0.0, 100.0)
+dt = 0.1
+
+#useless function below
+def periodic_cond(psi):
+    return (psi + np.pi) % (2 * np.pi) - np.pi
 
 def energy_calc(y):
     """returns energy of the state"""
@@ -20,25 +25,29 @@ def energy_calc(y):
     P = m * g * L * (1 - np.cos(alpha)) 
     return K + P
 
-def pend_deriv(y, t, omega_0, delta):
+def pend_deriv(t, y):
     """returns dy/dt for odeint"""
     alpha, omega = y
     dydt = [omega, - 2 * delta * omega - omega_0 ** 2 * np.sin(alpha)]
     return dydt
 
-ode_sol = integrate.odeint(pend_deriv, y_0, t, args = (omega_0, delta)) #global variable
+ode_sol = integrate.solve_ivp(pend_deriv, t, y_0, max_step = dt) #global variable
+t = ode_sol.t
+ode_sol = ode_sol.y.transpose()
 energy = [energy_calc(y) for y in ode_sol]
 
-# Here we done with calculations, so we do nice (or not) pic ####################################
+# Here we done with calculations, so we do nice (or not) pic 
+#################################################################################################
 #################################################################################################
 #################################################################################################
 
 head = 5
 fig = plt.figure()
+
 #first subplot: pendulum wavering
 ax1 = fig.add_subplot(2, 2, 1)
-ax1.set_xlim(-1, 1)
-ax1.set_ylim(-1, 1)
+ax1.set_xlim(-1.2, 1.2)
+ax1.set_ylim(-1.2, 1.2)
 ax1.set_aspect('equal')
 ax1.set_title('x-y coordinates')
 ax1.grid()
@@ -102,8 +111,7 @@ def animate(i):
     line4a, = ax4.plot(psi_arr[-head:], omega_arr[-head:], color = 'red')
     return line1, line1a, line2, line2a, line3, line3a, line4, line4a
 
-anim = animation.FuncAnimation(fig, animate, init_func = init, frames = len(t), interval = 10, blit = True)
+anim = animation.FuncAnimation(fig, animate, init_func = init, frames = len(t), interval = 20, blit = True)
 plt.legend()
 plt.tight_layout()  
 plt.show()
-
