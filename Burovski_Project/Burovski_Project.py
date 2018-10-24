@@ -19,7 +19,7 @@ def periodic_cond(psi):
 
 #event function, which stops evaluation, if energy decreased in 2 times
 def marvelous_strike(t, y):
-    return 0.5 * energy_calc(y_0) - energy_calc(y)
+    return energy_calc(y) - 0.5 * energy_calc(y_0)
 #marvelous_strike.terminal = True
 marvelous_strike.direction = 1
 
@@ -31,7 +31,7 @@ def energy_calc(y):
     return K + P
 
 def pend_deriv(t, y):
-    """returns dy/dt for odeint"""
+    """returns dy/dt for odeint or whatever"""
     alpha, omega = y
     dydt = [omega, - 2 * delta * omega - omega_0 ** 2 * np.sin(alpha)]
     return dydt
