@@ -17,11 +17,14 @@ dt = 0.1 #crutch for solve_ivp, or therell be not enought points on graphs
 def periodic_cond(psi):
     return (psi + np.pi) % (2 * np.pi) - np.pi
 
+def marvelous_strike(y):
+    return [y[0], y[1] + 0.4 * np.sign(y[1]) * np.sqrt(2 * energy_calc(y_0) / (m * L ** 2))]
+
 #event function, which stops evaluation, if energy decreased in 2 times
-def marvelous_strike(t, y):
+def marvelous_strike_cond(t, y):
     return energy_calc(y) - 0.5 * energy_calc(y_0)
-#marvelous_strike.terminal = True
-marvelous_strike.direction = 1
+marvelous_strike_cond.terminal = True
+marvelous_strike_cond.direction = -1
 
 def energy_calc(y):
     """returns energy of the state"""
@@ -36,10 +39,24 @@ def pend_deriv(t, y):
     dydt = [omega, - 2 * delta * omega - omega_0 ** 2 * np.sin(alpha)]
     return dydt
 
-ode_sol = integrate.solve_ivp(pend_deriv, t, y_0, max_step = dt, events = marvelous_strike) #global variable
-print(ode_sol.t_events, ode_sol.message)
-t = ode_sol.t
-ode_sol = ode_sol.y.transpose()
+
+#big nonelegant part, which solves evaluation from event to event and sew them together
+#make sure: marvelous_strike have to drive system out of marvelous_strike_cond zone
+status = 1
+t_temp = t
+y_0_temp = y_0
+t = []
+ode_sol = []
+while status == 1:
+    ode_sol_temp = integrate.solve_ivp(pend_deriv, t_temp, y_0_temp, max_step = dt, events = marvelous_strike_cond) #global variable
+    status = ode_sol_temp.status
+    t += ode_sol_temp.t.tolist()
+    ode_sol += ode_sol_temp.y.transpose().tolist()
+    print(ode_sol_temp.t_events)
+    t_temp = (t[-1], t_temp[1])
+    y_0_temp = ode_sol[-1]
+    y_0_temp = marvelous_strike(y_0_temp) 
+
 energy = [energy_calc(y) for y in ode_sol]
 
 # Here we done with calculations, so we do nice (or not) pic 
@@ -47,4 +64,4 @@ energy = [energy_calc(y) for y in ode_sol]
 #################################################################################################
 #################################################################################################
 
-dr.draw(ode_sol, t, energy, m, L)
+dr.draw(np.array(ode_sol), np.array(t), np.array(energy), m, L)

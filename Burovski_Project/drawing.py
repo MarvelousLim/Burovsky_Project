@@ -17,7 +17,7 @@ def draw(ode_sol, t, energy, m, L):
 
     #second: alpha wavering
     ax2 = fig.add_subplot(2, 2, 2)
-    ax2.set_xlim(-np.pi, np.pi)
+    ax2.set_xlim(min(ode_sol[:, 0]), max(ode_sol[:, 0]))
     ax2.set_ylim(t[0], t[-1])
     ax2.set_xlabel('alpha')
     ax2.set_title('alpha-t coordinates')
@@ -26,14 +26,14 @@ def draw(ode_sol, t, energy, m, L):
     #third: energy line
     ax3 = fig.add_subplot(2, 2, 3)
     ax3.set_xlim(t[0], t[-1])
-    ax3.set_ylim(0, energy[0] + 0.5)
+    ax3.set_ylim(0, max(energy) + 0.5)
     ax3.set_title('energy-t coordinates')
     ax3.grid()
 
     #forth: phase diagramm
     ax4 = fig.add_subplot(2, 2, 4)
-    ax4.set_xlim(-np.pi, np.pi)
-    ax4.set_ylim(-np.sqrt(2 * energy[0] / (m * L ** 2)), np.sqrt(2 * energy[0] / (m * L ** 2)))
+    ax4.set_xlim(min(ode_sol[:, 0]), max(ode_sol[:, 0]))
+    ax4.set_ylim(min(ode_sol[:, 1]), max(ode_sol[:, 1]))
     ax4.set_xlabel('alpha')
     ax4.set_ylabel('omega')
     ax4.set_title('phase diagramm')
