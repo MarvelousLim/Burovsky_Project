@@ -11,7 +11,7 @@ omega_0 = np.sqrt(g / L)
 delta = 0.5 * b / m
 y_0 = [np.pi - 0.2, 0] #y = [alpha, omega]
 t = (0.0, 100.0)
-dt = 0.1 #crutch for solve_ivp, or therell be not enought points on graphs
+dt = 0.05 #crutch for solve_ivp, or therell be not enought points on graphs
 
 #useless function
 def periodic_cond(psi):
@@ -27,9 +27,9 @@ marvelous_strike_cond.terminal = True
 marvelous_strike_cond.direction = -1
 
 def energy_calc(y):
-    """returns energy of the state"""
+    """returns energy of the state (alpha, omega)"""
     alpha, omega = y
-    K = 0.5 * m * L ** 2 * omega ** 2
+    K = 0.5 * m * L * L * omega * omega
     P = m * g * L * (1 - np.cos(alpha)) 
     return K + P
 
