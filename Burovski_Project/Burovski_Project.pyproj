@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>da4da334-0e21-4473-8d35-1a137ec04ed0</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>Burovski_Project.py</StartupFile>
+    <StartupFile>test.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
