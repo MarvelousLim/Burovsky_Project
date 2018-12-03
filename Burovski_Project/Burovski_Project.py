@@ -48,10 +48,10 @@ y_0_temp = y_0
 t = []
 ode_sol = []
 while status == 1:
-    ode_sol_temp = integrate.solve_ivp(pend_deriv, t_temp, y_0_temp, max_step = dt, events = marvelous_strike_cond) #global variable
+    ode_sol_temp = integrate.solve_ivp(pend_deriv, t_temp, y_0_temp, max_step=dt, events=marvelous_strike_cond) #global variable
     status = ode_sol_temp.status
     t += ode_sol_temp.t.tolist()
-    ode_sol += ode_sol_temp.y.transpose().tolist()
+    ode_sol += ode_sol_temp.y.transpose().tolist() #np.r_[a, b]; np.c_[a, b]; v(h, d, none)stack
     print(ode_sol_temp.t_events)
     t_temp = (t[-1], t_temp[1])
     y_0_temp = ode_sol[-1]
